@@ -1,0 +1,46 @@
+@font-face {
+    font-family: "Chakra Petch";
+    src: url("Chakra Petch/ChakraPetch-Medium.ttf");
+}
+
+body {
+    background-color: black;
+}
+
+#canvas {
+    display: block;
+    padding: 0px;
+    border-color: white;
+    border-width: 5px;
+    border-style: solid;
+}
+
+input[type=text]{
+    padding-top: 2px;
+    padding-bottom: 2px;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 4px;
+    text-align: center;
+    font-family: Chakra Petch;
+}
+
+.blackStyle{
+    color: white;
+    background-color: black;
+    border-color: white;
+}
+
+.whiteStyle{
+    color: black;
+    background-color: white;
+    border-color: black;
+}
+
+*{
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
