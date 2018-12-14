@@ -28,7 +28,7 @@ var winnerIndex;
 var player, ball, platform, goal;
 var dragObject = null;
 
-var playerInput = {player1Name: false, player1Mass: false, player2Name: false, player2Mass: false, ball1Mass: false,};
+var playerInput = {player1Name: false, player1Mass: false, player2Name: false, player2Mass: false, ball1MassInput: false,};
 
 var fontSrc = {};
 var musicSrc = {};
