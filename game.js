@@ -398,19 +398,25 @@ function playerPlayerCollision(player1, player2){
         player2.velocity.y = v2yP;
         
         // relocate the player
-        if(player1.location.y < player2.location.y-player1.dimension.y*4/5){
+        if(player1.location.y+player1.dimension.y < player2.location.y+player2.dimension.y/5){
             player1.location.y = player2.location.y - player1.dimension.y - 1;
             player1.jump.ready = true;
         }
-        else if(player2.location.y < player1.location.y-player2.dimension.y*4/5){
+        else if(player1.location.y+player2.dimension.y/5 > player2.location.y+player2.dimension.y){
             player2.location.y = player1.location.y - player2.dimension.y - 1;
             player2.jump.ready = true;
         }
-        else if(player1.location.x < player2.location.x && player2.location.x-player1.dimension.x >= leftBoundary){
+        else if(player1.location.x < player2.location.x && player1.location.x+player1.dimension.x+player2.dimension.x+1 >= width){
             player1.location.x = player2.location.x - player1.dimension.x - 1;
         }
         else if(player1.location.x < player2.location.x){
             player2.location.x = player1.location.x + player1.dimension.x + 1;
+        }
+        else if(player1.location.x > player2.location.x && player1.location.x-player2.dimension.x-1 <= leftBoundary){
+            player1.location.x = player2.location.x + player2.dimension.x + 1;
+        }
+        else if(player1.location.x > player2.location.x){
+            player2.location.x = player1.location.x - player2.dimension.x - 1;
         }
     }
 }
@@ -437,21 +443,27 @@ function playerBallCollision(player1, ball1){
         ball1.velocity.y = v2yP;
         
         // relocate the player
-        if(player1.location.y < ball1.location.y-ball1.dimension.y*4/5){
+        if(player1.location.y+player1.dimension.y < ball1.location.y/*-ball1.dimension.y*4/5*/){
             player1.location.y = ball1.location.y - ball1.dimension.y/2 - player1.dimension.y - 1;
             player1.jump.ready = true;
             if(ball1.location.y+ball1.dimension.y/2 >= height){
                 ball1.velocity.y = 0;
             }
         }
-        else if(ball1.location.y-ball1.dimension.y/2 < player1.location.y){
+        else if(player1.location.y+player1.dimension.y/5 > ball1.location.y+ball1.dimension.y/2){
             ball1.location.y = player1.location.y - ball1.dimension.y/2 - 1;
         }
-        else if(player1.location.x < ball1.location.x-ball1.dimension.x/2 && ball1.location.x-ball1.dimension.x/2-player1.dimension.x >= leftBoundary){
+        else if(player1.location.x+player1.dimension.x < ball1.location.x/*-ball1.dimension.x*4/5*/ && player1.location.x+player1.dimension.x+ball1.dimension.x+1 >= width){
             player1.location.x = ball1.location.x - ball1.dimension.x/2 - player1.dimension.x - 1;
         }
-        else if(player1.location.x < ball1.location.x-ball1.dimension.x/2){
+        else if(player1.location.x+player1.dimension.x < ball1.location.x/*-ball1.dimension.x*4/5*/){
             ball1.location.x = player1.location.x + player1.dimension.x + ball1.dimension.x/2 + 1;
+        }
+        else if(player1.location.x > ball1.location.x/*+ball1.dimension.x*4/5*/ && player1.location.x-ball1.dimension.x-1 <= leftBoundary){
+            player1.location.x = ball1.location.x + ball1.dimension.x/2 + 1;
+        }
+        else if(player1.location.x > ball1.location.x/*+ball1.dimension.x*4/5*/){
+            ball1.location.x = player1.location.x - ball1.dimension.x/2 - 1;
         }
         
         if(!goalScored && gameStatus == "active" && ballBounce < ballBounceNeed){
@@ -471,19 +483,12 @@ function playerKickCollision(player1, player2){
         var v1x = player1.velocity.x;
         var v1y = player1.velocity.y;
         var m2 = player2.kick.mass;
-        if(player2.direction.x == 1){
-            var v2x = player2.velocity.x + player2.dimension.x/2;
-        }
-        else{
-            var v2x = player2.velocity.x - player2.dimension.x/2;
-        }
+        var v2x = player2.velocity.x + player2.dimension.x/2 * player2.direction.x;
         var v2y = player2.velocity.y - player2.dimension.y/2;
         
         // do momentum calculation
-        if(v1x > 0 || v1x > 0){
-            var v1xP = ((m1*v1x) + m2*(2*v2x-v1x)) / (m1 + m2);
-            player1.velocity.x = v1xP;
-        }
+        var v1xP = ((m1*v1x) + m2*(2*v2x-v1x)) / (m1 + m2);
+        player1.velocity.x = v1xP;
 
         var v1yP = ((m1*v1y) + m2*(2*v2y-v1y)) / (m1 + m2);
         player1.velocity.y = v1yP;
@@ -532,20 +537,20 @@ function playerPlatformCollision(player1, platform1){
 
 function playerBoundaryCollision(player1){ 
     if(player1.location.x < leftBoundary){
-        player1.velocity.x = 0;
         player1.location.x = leftBoundary;
+        player1.velocity.x = 0;
     }
     else if(player1.location.x+player1.dimension.x > width){
-        player1.velocity.x *= 0;
         player1.location.x = width-player1.dimension.x;
+        player1.velocity.x = 0;
     }
-    if(player1.location.y < 0){
-        player1.velocity.y *= -1 * restitution;
+    else if(player1.location.y < 0){
         player1.location.y = 0;
+        player1.velocity.y *= -1 * restitution;
     }
     else if(player1.location.y+player1.dimension.y > height){
-        player1.velocity.y *= 0;
         player1.location.y = height-player1.dimension.y;
+        player1.velocity.y = 0;
         player1.jump.ready = true;
     }
 }
@@ -572,44 +577,43 @@ function ballBallCollision(ball1, ball2){
         ball2.velocity.y = v2yP;
         
         // relocate the player
-        if(ball1.location.y-ball1.dimension.y/2 < ball2.location.y-ball2.dimension.y*2/5){
-            ball1.location.y = ball2.location.y - ball2.dimension.y/2 - ball1.dimension.y - 1;
+        if(ball1.location.y-ball1.dimension.y/2 < ball2.location.y+ball2.dimension.y/5){
+            ball1.location.y = ball2.location.y - ball2.dimension.y/2 - ball1.dimension.y/2 - 1;
             //if(ball2.location.y+ball2.dimension.y/2 >= height){
                 //ball2.velocity.y = 0;
             //}
         }
-        else if(ball2.location.y-ball2.dimension.y/2 < ball1.location.y-ball1.dimension.y*2/5){
-            ball2.location.y = ball1.location.y - ball1.dimension.y - ball2.dimension.y/2 - 1;
+        else if(ball1.location.y+ball1.dimension.y/5 > ball2.location.y-ball2.dimension.y/2){
+            ball2.location.y = ball1.location.y - ball1.dimension.y/2 - ball2.dimension.y/2 - 1;
         }
-        else if(ball1.location.x-ball1.dimension.x/2 < ball2.location.x-ball2.dimension.x/2 && ball2.location.x-ball2.dimension.x/2-ball1.dimension.x >= leftBoundary){
-            ball1.location.x = ball2.location.x - ball2.dimension.x/2 - ball1.dimension.x - 1;
+        else if(ball1.location.x < ball2.location.x && ball1.location.x+ball1.dimension.x/2+ball2.dimension.x+1 >= width){
+            ball1.location.x = ball2.location.x - ball2.dimension.x/2 - ball1.dimension.x/2 - 1;
         }
-        else if(ball1.location.x-ball1.dimension.x/2 < ball2.location.x-ball2.dimension.x/2){
-            ball2.location.x = ball1.location.x + ball1.dimension.x/2 + ball2.dimension.x + 1;
+        else if(ball1.location.x < ball2.location.x){
+            ball2.location.x = ball1.location.x + ball1.dimension.x/2 + ball2.dimension.x/2 + 1;
+        }
+        else if(ball1.location.x > ball2.location.x && ball1.location.x-ball1.dimension.x/2-ball2.dimension.x-1 <= leftBoundary){
+            ball1.location.x = ball2.location.x + ball2.dimension.x/2 + ball1.dimension.x/2 + 1;
+        }
+        else if(ball1.location.x > ball2.location.x){
+            ball2.location.x = ball1.location.x - ball1.dimension.x/2 - ball2.dimension.x/2 - 1;
         }
     }
 }
 
 function ballKickCollision(ball1, player1){ 
-    if(collideRectRect(ball1.location.x, ball1.location.y, ball1.dimension.x, ball1.dimension.y, player1.kick.location.x, player1.kick.location.y, player1.kick.dimension.x, player1.kick.dimension.y)){    
+    if(collideRectCircle(player1.kick.location.x, player1.kick.location.y, player1.kick.dimension.x, player1.kick.dimension.y, ball1.location.x, ball1.location.y, ball1.dimension.x)){    
         // set variables
         var m1 = ball1.mass;
         var v1x = ball1.velocity.x;
         var v1y = ball1.velocity.y;
         var m2 = player1.kick.mass;
-        if(player1.direction.x == 1){
-            var v2x = player1.velocity.x + player1.dimension.x/2;
-        }
-        else{
-            var v2x = player1.velocity.x - player1.dimension.x/2;
-        }
+        var v2x = player1.velocity.x + player1.dimension.x/2 * player1.direction.x;
         var v2y = player1.velocity.y - player1.dimension.y/3;
         
         // do momentum calculation
-        if(v1x > 0 || v1x > 0){
-            var v1xP = ((m1*v1x) + m2*(2*v2x-v1x)) / (m1 + m2);
-            ball1.velocity.x = v1xP;
-        }
+        var v1xP = ((m1*v1x) + m2*(2*v2x-v1x)) / (m1 + m2);
+        ball1.velocity.x = v1xP;
         var v1yP = ((m1*v1y) + m2*(2*v2y-v1y)) / (m1 + m2);
         ball1.velocity.y = v1yP;
         
@@ -622,6 +626,12 @@ function ballKickCollision(ball1, player1){
         }
         
         ball1.location.y = player1.kick.location.y - ball1.dimension.y/2 - 1;
+        if(player1.direction.x == 1){
+            ball1.location.x = player1.kick.location.x + player1.kick.dimension.x + ball1.dimension.x/2 + 1;
+        }
+        else{
+            ball1.location.x = player1.kick.location.x - ball1.dimension.x/2 - 1;
+        }
         
         player1.kick.ready = true;
         player1.kick.active = false;
@@ -654,6 +664,9 @@ function ballPlatformCollision(ball1, platform1){
             ball1.location.y = g1y - b1h/2 - 1;
             ball1.velocity.y *= -1 * restitution;
             ballBounce += 1;
+            if(Math.abs(ball1.velocity.y) < 0.06){
+              ball1.velocity.y = 0;  
+            }
         }
         //down
         else if(collideRectCircle(g1x, g1y+g1h-1, g1w, 1, b1x, b1y, b1w)){
@@ -691,21 +704,24 @@ function ballGoalCollision(ball1, goal1){
 
 function ballBoundaryCollision(ball1){
     if(ball1.location.x-ball1.dimension.x/2 < leftBoundary){
+        ball1.location.x = leftBoundary + ball1.dimension.x/2;
         ball1.velocity.x *= -1 * restitution;
-        ball1.location.x = leftBoundary+ball1.dimension.x/2;
     }
     else if(ball1.location.x+ball1.dimension.x/2 > width){
+        ball1.location.x = width - ball1.dimension.x/2;
         ball1.velocity.x *= -1 * restitution;
-        ball1.location.x = width-ball1.dimension.x/2;
     }
-    if(ball1.location.y-ball1.dimension.y/2 < 0){
-        ball1.velocity.y *= -1 * restitution;
+    else if(ball1.location.y-ball1.dimension.y/2 < 0){
         ball1.location.y = ball1.dimension.y/2;
+        ball1.velocity.y *= -1 * restitution;
     }
     else if(ball1.location.y+ball1.dimension.y/2 > height){
+        ball1.location.y = height - ball1.dimension.y/2;
         ball1.velocity.y *= -1 * restitution;
-        ball1.location.y = height-ball1.dimension.y/2;
         ballBounce += 1;
+        if(Math.abs(ball1.velocity.y) < 0.06){
+          ball1.velocity.y = 0;  
+        }
     }
 }
 
