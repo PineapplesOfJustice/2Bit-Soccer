@@ -544,7 +544,7 @@ function playerBoundaryCollision(player1){
         player1.location.x = width-player1.dimension.x;
         player1.velocity.x = 0;
     }
-    else if(player1.location.y < 0){
+    if(player1.location.y < 0){
         player1.location.y = 0;
         player1.velocity.y *= -1 * restitution;
     }
@@ -711,7 +711,7 @@ function ballBoundaryCollision(ball1){
         ball1.location.x = width - ball1.dimension.x/2;
         ball1.velocity.x *= -1 * restitution;
     }
-    else if(ball1.location.y-ball1.dimension.y/2 < 0){
+    if(ball1.location.y-ball1.dimension.y/2 < 0){
         ball1.location.y = ball1.dimension.y/2;
         ball1.velocity.y *= -1 * restitution;
     }
