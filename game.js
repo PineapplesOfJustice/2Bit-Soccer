@@ -453,17 +453,17 @@ function playerBallCollision(player1, ball1){
         else if(player1.location.y+player1.dimension.y/5 > ball1.location.y+ball1.dimension.y/2){
             ball1.location.y = player1.location.y - ball1.dimension.y/2 - 1;
         }
-        else if(player1.location.x+player1.dimension.x < ball1.location.x/*-ball1.dimension.x*4/5*/ && player1.location.x+player1.dimension.x+ball1.dimension.x+1 >= width){
-            player1.location.x = ball1.location.x - ball1.dimension.x/2 - player1.dimension.x - 1;
+        else if(player1.location.x+player1.dimension.x/2 < ball1.location.x/*-ball1.dimension.x*4/5*/){
+            //ball1.location.x = player1.location.x + player1.dimension.x + ball1.dimension.x/2 + 1;
+            var averageX = (player1.location.x+player1.dimension.x + ball1.location.x-ball1.dimension.x/2) / 2;
+            player1.location.x = averageX - player1.dimension.x;
+            ball1.location.x = averageX + ball1.dimension.x/2 + 1;
         }
-        else if(player1.location.x+player1.dimension.x < ball1.location.x/*-ball1.dimension.x*4/5*/){
-            ball1.location.x = player1.location.x + player1.dimension.x + ball1.dimension.x/2 + 1;
-        }
-        else if(player1.location.x > ball1.location.x/*+ball1.dimension.x*4/5*/ && player1.location.x-ball1.dimension.x-1 <= leftBoundary){
-            player1.location.x = ball1.location.x + ball1.dimension.x/2 + 1;
-        }
-        else if(player1.location.x > ball1.location.x/*+ball1.dimension.x*4/5*/){
-            ball1.location.x = player1.location.x - ball1.dimension.x/2 - 1;
+        else if(player1.location.x+player1.dimension.x/2 > ball1.location.x/*+ball1.dimension.x*4/5*/){
+            //ball1.location.x = player1.location.x - ball1.dimension.x/2 - 1;
+            var averageX = (player1.location.x + ball1.location.x+ball1.dimension.x/2) / 2;
+            player1.location.x = averageX;
+            ball1.location.x = averageX - ball1.dimension.x/2 - 1;
         }
         
         if(!goalScored && gameStatus == "active" && ballBounce < ballBounceNeed){
